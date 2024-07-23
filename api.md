@@ -18,8 +18,9 @@ Git репозиторий с кодом
 
 # API
 
-## User
+## SSO(jwt auth)
 
+### {addr}:{port}/register
 ```JSON
 {
   "user":"username",  
@@ -27,7 +28,16 @@ Git репозиторий с кодом
 }
 ```
 
-## Message
+### {addr}:{port}/auth
+```JSON
+{
+  "user":"username",
+  "pass":"password"
+}
+```
+this method returns jwt auth in cookies
+
+## Messager
 
 ```JSON
 {
