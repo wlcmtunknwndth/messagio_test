@@ -10,3 +10,6 @@ db:
   ssl_mode: "disable"
   port: "5432"
 broker:
+  client_id: "1"
+  servers: "host1:9092,host2:9092"
+  acks: "all"
