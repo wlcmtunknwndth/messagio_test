@@ -1,0 +1,11 @@
+env: "local"
+server:
+  address: "localhost:7777"
+  timeout: 5s
+  idle_timeout: 30s
+db:
+  user: "postgres"
+  pass: "postgres"
+  name: "postgres"
+  ssl_mode: "disable"
+  port: "5432"

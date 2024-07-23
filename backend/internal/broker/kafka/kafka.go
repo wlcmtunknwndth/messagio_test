@@ -11,7 +11,7 @@ type Kafka struct {
 	producer *kafka.Producer
 }
 
-const scope = "internal.scope.broker.kafka."
+const scope = "inner.scope.broker.kafka."
 
 func New(clientId, servers, acks string, log *slog.Logger) (*Kafka, error) {
 	const op = scope + "New"

@@ -36,7 +36,7 @@ type Broker struct {
 const configPathEnv = "config_path"
 
 func MustLoad() *Config {
-	const op = "internal.config.MustLoad"
+	const op = "inner.config.MustLoad"
 
 	path, ok := os.LookupEnv(configPathEnv)
 	if !ok || path == "" {

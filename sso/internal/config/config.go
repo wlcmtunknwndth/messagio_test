@@ -9,8 +9,9 @@ import (
 const configPathEnv = "config_path"
 
 type Config struct {
-	Env    string `yaml:"env" env-default:"prod"`
-	Server Server `yaml:"server" env-required:"true"`
+	Env    string   `yaml:"env" env-default:"prod"`
+	Server Server   `yaml:"server" env-required:"true"`
+	DB     DataBase `yaml:"db"`
 }
 
 type Server struct {
@@ -19,8 +20,16 @@ type Server struct {
 	IdleTimeout time.Duration `yaml:"idle_timeout"`
 }
 
+type DataBase struct {
+	DbUser  string `yaml:"user" env-default:"postgres"`
+	DbPass  string `yaml:"pass" env-default:"postgres"`
+	DbName  string `yaml:"name" env-default:"postgres"`
+	SslMode string `yaml:"ssl_mode" env-default:"disable"`
+	Port    string `yaml:"port" env-default:"5432"`
+}
+
 func MustLoad() *Config {
-	const op = "internal.config.MustLoad"
+	const op = "inner.config.MustLoad"
 
 	path, ok := os.LookupEnv(configPathEnv)
 	if !ok || path == "" {
