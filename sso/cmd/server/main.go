@@ -1,4 +1,4 @@
-package cmd
+package server
 
 import (
 	"github.com/wlcmtunknwndth/messagio_test/common/logger"

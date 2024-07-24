@@ -1,18 +1,65 @@
 services:
   server:
+    environment:
+      - config_path: /server/config.yaml
+    networks: ["SRV"]
     build:
       context: backend
       target: final
     ports:
-      - 8888:8888
+      - "8888:8888"
+    depends_on:
+      - sso
+      - kafka
+      - postgres
+  sso:
+    environment:
+      - config_path: /sso/config.yaml
+    networks: ["SRV"]
+    build:
+      context: backend
+      target: final
+    ports:
+      - "7777:7777"
+    depends_on:
+      - postgres
+      - kafka
   kafka:
     image: confluentinc/cp-kafka:latest
+    restart: always
     ports:
-      - 9092:9092
+      - "9092:9092"
+    networks: ["SRV"]
     environment:
       KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+#      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+  postgres:
+    image: postgres
+    restart: always
+    volumes:
+      - db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - PGUSER=postgres
+    ports:
+      - "5432:5432"
+    networks: [ "SRV" ]
+
+    healthcheck:
+      test: [ "CMD", "pg_isready" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+networks:
+  srv:
+    name: srv
+volumes:
+  data:
+    driver: local

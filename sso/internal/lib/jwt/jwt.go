@@ -13,7 +13,7 @@ const (
 	errNoKeyFound = "no secret key found"
 )
 
-func NewToken(user models.User, duration time.Duration) (string, error) {
+func NewToken(user *models.User, duration time.Duration) (string, error) {
 	const op = "sso.lib.jwt.NewToken"
 	token := jwt.New(jwt.SigningMethodHS512)
 

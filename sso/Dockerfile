@@ -27,10 +27,10 @@ RUN --mount=type=cache,target=/var/cache/apk \
 ARG UID=10001
 USER root
 
-RUN mkdir /server
-COPY --from=build /bin/server /server
-COPY ./config/config.yaml /server
+RUN mkdir /sso
+COPY --from=build /bin/server /sso
+COPY ./config/config.yaml /sso
 
 EXPOSE 8888
 
-ENTRYPOINT [ "/server/server" ]
+ENTRYPOINT [ "/sso/server" ]

@@ -27,9 +27,9 @@ type Auth struct {
 }
 
 type Storage interface {
-	User(ctx context.Context, email string) (models.User, error)
+	User(ctx context.Context, email string) (*models.User, error)
 	IsAdmin(ctx context.Context, userID int64) (bool, error)
-	SaveUser(ctx context.Context, email string, passHash []byte) (int64, error)
+	SaveUser(ctx context.Context, user string, passHash []byte) (int64, error)
 }
 
 func New(log *slog.Logger, storage Storage, tokenTTL time.Duration) *Auth {
