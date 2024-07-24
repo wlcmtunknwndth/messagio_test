@@ -35,6 +35,7 @@ const (
 	errInvalidCredentials  = "Invalid credentials"
 	errInternalServerError = "Internal server error"
 	errBadRequest          = "Bad request"
+	errIdQuery             = "ID not found"
 )
 
 func (a *Auth) Login(w http.ResponseWriter, r *http.Request) {
@@ -91,6 +92,38 @@ func (a *Auth) Register(w http.ResponseWriter, r *http.Request) {
 
 	httpResp.Write(w, http.StatusCreated, fmt.Sprintf("Created user: id=%d", id))
 }
+
+//func (a *Auth) IsAdmin(w http.ResponseWriter, r *http.Request) {
+//	const op = scope + "IsAdmin"
+//
+//	idQry, ok := r.URL.Query()["id"]
+//	if !ok {
+//		a.log.Error("couldn't find id in query", sl.Op(op))
+//		httpResp.Write(w, http.StatusNotFound, errIdQuery)
+//		return
+//	}
+//
+//	id, err := strconv.ParseInt(idQry[0], 10, 64)
+//	if err != nil {
+//		a.log.Error("couldn't cast string to int64", sl.Op(op), sl.Err(err))
+//		httpResp.Write(w, http.StatusBadRequest, errBadRequest)
+//		return
+//	}
+//
+//	res, err := a.service.IsAdmin(r.Context(), id)
+//	if err != nil {
+//		a.log.Error("couldn't determine if user is admin", sl.Op(op), sl.Err(err))
+//		httpResp.Write(w, http.StatusInternalServerError, errInternalServerError)
+//		return
+//	}
+//
+//	if res {
+//		httpResp.Write(w, http.StatusOK, "ok")
+//	}else{
+//		httpResp.Write(w, http.)
+//	}
+//
+//}
 
 func extractUserCredentials(r *http.Request) (*api.User, error) {
 	const op = scope + "extractUserCreds"

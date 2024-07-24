@@ -54,7 +54,13 @@ func (a *Auth) Login(ctx context.Context, username, password string) (string, er
 		return "", fmt.Errorf("%s: %w", op, err)
 	}
 
-	token, err := jwt.NewToken(usr, a.tokenTTL)
+	// admin check
+	isAdmin, err := a.IsAdmin(ctx, usr.ID)
+	if err != nil {
+		isAdmin = false
+	}
+
+	token, err := jwt.NewToken(usr, a.tokenTTL, isAdmin)
 	if err != nil {
 		return "", fmt.Errorf("%s: %w", op, err)
 	}
@@ -90,7 +96,6 @@ func (a *Auth) IsAdmin(ctx context.Context, userID int64) (bool, error) {
 		if errors.Is(err, storage.ErrUserNotFound) {
 			return false, fmt.Errorf("%s: %w", op, internal.ErrUserNotFound)
 		}
-
 		return false, fmt.Errorf("%s: %w", op, err)
 	}
 

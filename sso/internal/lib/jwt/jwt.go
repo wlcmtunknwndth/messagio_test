@@ -13,15 +13,19 @@ const (
 	errNoKeyFound = "no secret key found"
 )
 
-func NewToken(user *models.User, duration time.Duration) (string, error) {
+func NewToken(user *models.User, duration time.Duration, isAdmin bool) (string, error) {
 	const op = "sso.lib.jwt.NewToken"
 	token := jwt.New(jwt.SigningMethodHS512)
 
-	claims := token.Claims.(jwt.MapClaims)
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok {
+		return "", fmt.Errorf("%s: couldn't assert to Map Claims", op)
+	}
 
 	claims["uid"] = user.ID
 	claims["user"] = user.Username
 	claims["exp"] = time.Now().Add(duration).Unix()
+	claims["isAdmin"] = isAdmin
 
 	secret, ok := os.LookupEnv(secretKeyEnv)
 	if !ok {
@@ -35,3 +39,5 @@ func NewToken(user *models.User, duration time.Duration) (string, error) {
 	}
 	return tokenString, nil
 }
+
+//func IsAdmin(ctx context.Context )
