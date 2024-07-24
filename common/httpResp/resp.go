@@ -1,6 +1,9 @@
 package httpResp
 
-import "net/http"
+import (
+	"net/http"
+	"time"
+)
 
 func Write(w http.ResponseWriter, statusCode int, info string) {
 	w.WriteHeader(statusCode)
@@ -8,4 +11,12 @@ func Write(w http.ResponseWriter, statusCode int, info string) {
 	if err != nil {
 		return
 	}
+}
+
+func WriteToken(w http.ResponseWriter, token string, duration time.Duration) {
+	http.SetCookie(w, &http.Cookie{
+		Name:    "sso-token",
+		Value:   token,
+		Expires: time.Now().Add(duration),
+	})
 }

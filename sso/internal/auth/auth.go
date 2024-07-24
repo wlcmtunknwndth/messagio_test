@@ -26,6 +26,10 @@ type Auth struct {
 	tokenTTL time.Duration
 }
 
+func (a *Auth) GetTokenTTL() time.Duration {
+	return a.tokenTTL
+}
+
 type Storage interface {
 	User(ctx context.Context, email string) (*models.User, error)
 	IsAdmin(ctx context.Context, userID int64) (bool, error)

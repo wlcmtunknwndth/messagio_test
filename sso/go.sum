@@ -37,8 +37,8 @@ github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UV
 github.com/stretchr/testify v1.7.0/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
 github.com/stretchr/testify v1.8.1 h1:w7B6lhMri9wdJUVmEZPGGhZzrYTPvgJArz7wNPgYKsk=
 github.com/stretchr/testify v1.8.1/go.mod h1:w2LPCIKwWwSfY2zedu0+kehJoqGctiVI29o6fzry7u4=
-github.com/wlcmtunknwndth/messagio_test/common v0.0.0-20240723210155-80dd10a7d8fd h1:78rNsD+5+A75NcHh7G5YrBLUSc6fUTe8yjiEj08dEYs=
-github.com/wlcmtunknwndth/messagio_test/common v0.0.0-20240723210155-80dd10a7d8fd/go.mod h1:qUAdbahQIerL7xyBkMMcG5J0vxqVt5nKPce0kzClx+U=
+github.com/wlcmtunknwndth/messagio_test/common v0.0.0-20240724125504-23d2ad9d8fe0 h1:r5+UVManKbgo7Pdg99LWwN2nXp2f27X7soi65DckKg0=
+github.com/wlcmtunknwndth/messagio_test/common v0.0.0-20240724125504-23d2ad9d8fe0/go.mod h1:qUAdbahQIerL7xyBkMMcG5J0vxqVt5nKPce0kzClx+U=
 golang.org/x/crypto v0.25.0 h1:ypSNr+bnYL2YhwoMt2zPxHFmbAN1KZs/njMG3hxUp30=
 golang.org/x/crypto v0.25.0/go.mod h1:T+wALwcMOSE0kXgUAnPAHqTLW+XHgcELELW8VaDgm/M=
 golang.org/x/sync v0.7.0 h1:YsImfSBoP9QPYL0xyKJPq0gcaJdG3rInoqxTWbfQu9M=
