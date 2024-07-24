@@ -6,7 +6,7 @@ require (
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/ilyakaznacheev/cleanenv v1.5.0
 	github.com/lib/pq v1.10.9
-	github.com/wlcmtunknwndth/messagio_test/common v0.0.0-20240724125504-23d2ad9d8fe0
+	github.com/wlcmtunknwndth/messagio_test/common v0.0.0-20240724140543-0421b8324831 //v0.0.0-20240724125504-23d2ad9d8fe0
 	golang.org/x/crypto v0.25.0
 	gorm.io/driver/postgres v1.5.9
 	gorm.io/gorm v1.25.11

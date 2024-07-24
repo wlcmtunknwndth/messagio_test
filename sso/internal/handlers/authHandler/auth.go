@@ -3,9 +3,12 @@ package authHandler
 import (
 	"context"
 	"encoding/json"
+	"errors"
+	"fmt"
 	"github.com/wlcmtunknwndth/messagio_test/common/domain/api"
 	"github.com/wlcmtunknwndth/messagio_test/common/httpResp"
 	"github.com/wlcmtunknwndth/messagio_test/common/sl"
+	"github.com/wlcmtunknwndth/messagio_test/sso/internal"
 	"io"
 	"log/slog"
 	"net/http"
@@ -13,8 +16,8 @@ import (
 )
 
 type AuthService interface {
-	Login(ctx context.Context, email, password string) (string, error)
-	RegisterNewUser(ctx context.Context, email, pass string) (int64, error)
+	Login(ctx context.Context, username, password string) (string, error)
+	RegisterNewUser(ctx context.Context, username, pass string) (int64, error)
 	IsAdmin(ctx context.Context, userID int64) (bool, error)
 	GetTokenTTL() time.Duration
 }
@@ -28,6 +31,7 @@ const (
 	scope = "sso.internal.handlers.authHandler."
 
 	errUserNotFound        = "User not found"
+	errUserExists          = "User exits"
 	errInvalidCredentials  = "Invalid credentials"
 	errInternalServerError = "Internal server error"
 	errBadRequest          = "Bad request"
@@ -36,31 +40,25 @@ const (
 func (a *Auth) Login(w http.ResponseWriter, r *http.Request) {
 	const op = scope + "Login"
 
-	defer func(body io.ReadCloser) {
-		err := body.Close()
-		if err != nil {
-			a.log.Error("couldn't close request body", sl.Op(op), sl.Err(err))
-			return
-		}
-		return
-	}(r.Body)
-
-	data, err := io.ReadAll(r.Body)
+	usr, err := extractUserCredentials(r)
 	if err != nil {
-		a.log.Error("couldn't read body", sl.Op(op), sl.Err(err))
-		httpResp.Write(w, http.StatusBadRequest, errBadRequest)
-		return
-	}
-
-	var usr api.User
-	if err = json.Unmarshal(data, &usr); err != nil {
-		a.log.Error("couldn't unmarshal request", sl.Op(op), sl.Err(err))
+		a.log.Error("couldn't handle request body", sl.Op(op), sl.Err(err))
 		httpResp.Write(w, http.StatusBadRequest, errBadRequest)
 		return
 	}
 
 	token, err := a.service.Login(r.Context(), usr.Username, usr.Password)
 	if err != nil {
+		if errors.Is(err, internal.ErrUserNotFound) {
+			a.log.Error("user exists", sl.Op(op), sl.Err(err))
+			httpResp.Write(w, http.StatusNotFound, errUserNotFound)
+			return
+		}
+		if errors.Is(err, internal.ErrInvalidCredentials) {
+			a.log.Error("invalid credentials", sl.Op(op), sl.Err(err))
+			httpResp.Write(w, http.StatusForbidden, errInvalidCredentials)
+			return
+		}
 		a.log.Error("couldn't login user", sl.Op(op), sl.Err(err))
 		httpResp.Write(w, http.StatusInternalServerError, errInternalServerError)
 		return
@@ -72,4 +70,42 @@ func (a *Auth) Login(w http.ResponseWriter, r *http.Request) {
 func (a *Auth) Register(w http.ResponseWriter, r *http.Request) {
 	const op = scope + "Register"
 
+	usr, err := extractUserCredentials(r)
+	if err != nil {
+		a.log.Error("couldn't handle request body", sl.Op(op), sl.Err(err))
+		httpResp.Write(w, http.StatusBadRequest, errBadRequest)
+		return
+	}
+
+	id, err := a.service.RegisterNewUser(r.Context(), usr.Username, usr.Password)
+	if err != nil {
+		if errors.Is(err, internal.ErrUserExists) {
+			a.log.Error("user already exists", sl.Op(op), sl.Err(err))
+			httpResp.Write(w, http.StatusForbidden, errUserExists)
+			return
+		}
+		a.log.Error("couldn't register new user", sl.Op(op), sl.Err(err))
+		httpResp.Write(w, http.StatusInternalServerError, errInternalServerError)
+		return
+	}
+
+	httpResp.Write(w, http.StatusCreated, fmt.Sprintf("Created user: id=%d", id))
+}
+
+func extractUserCredentials(r *http.Request) (*api.User, error) {
+	const op = scope + "extractUserCreds"
+
+	defer r.Body.Close()
+
+	data, err := io.ReadAll(r.Body)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	var usr api.User
+	if err = json.Unmarshal(data, &usr); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return &usr, nil
 }

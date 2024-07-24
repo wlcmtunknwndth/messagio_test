@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/wlcmtunknwndth/messagio_test/sso/internal"
 	"github.com/wlcmtunknwndth/messagio_test/sso/internal/domain/models"
 	"github.com/wlcmtunknwndth/messagio_test/sso/internal/lib/jwt"
 	"github.com/wlcmtunknwndth/messagio_test/sso/internal/storage"
@@ -13,12 +14,6 @@ import (
 )
 
 const scope = "sso.inner.auth."
-
-var (
-	ErrInvalidCredentials = errors.New("invalid credentials")
-	ErrUserExists         = errors.New("user already exists")
-	ErrUserNotFound       = errors.New("user not found")
-)
 
 type Auth struct {
 	log      *slog.Logger
@@ -44,13 +39,13 @@ func New(log *slog.Logger, storage Storage, tokenTTL time.Duration) *Auth {
 	}
 }
 
-func (a *Auth) Login(ctx context.Context, email, password string) (string, error) {
+func (a *Auth) Login(ctx context.Context, username, password string) (string, error) {
 	const op = scope + "Login"
 
-	usr, err := a.storage.User(ctx, email)
+	usr, err := a.storage.User(ctx, username)
 	if err != nil {
 		if errors.Is(err, storage.ErrUserNotFound) {
-			return "", fmt.Errorf("%s: %w", op, ErrInvalidCredentials)
+			return "", fmt.Errorf("%s: %w", op, internal.ErrInvalidCredentials)
 		}
 		return "", fmt.Errorf("%s: %w", op, err)
 	}
@@ -67,7 +62,7 @@ func (a *Auth) Login(ctx context.Context, email, password string) (string, error
 	return token, nil
 }
 
-func (a *Auth) RegisterNewUser(ctx context.Context, email, pass string) (int64, error) {
+func (a *Auth) RegisterNewUser(ctx context.Context, username, pass string) (int64, error) {
 	const op = scope + ".RegisterNewUser"
 
 	passHash, err := bcrypt.GenerateFromPassword([]byte(pass), bcrypt.DefaultCost)
@@ -75,11 +70,11 @@ func (a *Auth) RegisterNewUser(ctx context.Context, email, pass string) (int64, 
 		return 0, fmt.Errorf("%s: %w", op, err)
 	}
 
-	id, err := a.storage.SaveUser(ctx, email, passHash)
+	id, err := a.storage.SaveUser(ctx, username, passHash)
 	if err != nil {
 		if errors.Is(err, storage.ErrUserExists) {
 
-			return 0, fmt.Errorf("%s: %w", op, ErrUserExists)
+			return 0, fmt.Errorf("%s: %w", op, internal.ErrUserExists)
 		}
 		return 0, fmt.Errorf("%s: %w", op, err)
 	}
@@ -93,7 +88,7 @@ func (a *Auth) IsAdmin(ctx context.Context, userID int64) (bool, error) {
 	isAdmin, err := a.storage.IsAdmin(ctx, userID)
 	if err != nil {
 		if errors.Is(err, storage.ErrUserNotFound) {
-			return false, fmt.Errorf("%s: %w", op, ErrUserNotFound)
+			return false, fmt.Errorf("%s: %w", op, internal.ErrUserNotFound)
 		}
 
 		return false, fmt.Errorf("%s: %w", op, err)
