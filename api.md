@@ -37,21 +37,39 @@ Git репозиторий с кодом
 ```
 this method returns jwt auth in cookies
 
-## Messager
+## Message
 
 ```JSON
 {
-  "chat_id": uint,
+  "pal_id": uint,
   "user_id": uint,
   "message": "your msg"
 }
 ```
 
-```JSON
-{
-  ""
-}
-```
 ## POST /send
 
-## GET /get?id=<>
+```JSON
+{
+  "pal_id": uint,
+  "message": "your msg"
+}
+```
+
+## GET /chat?_id=uint&offset=uint&limit=uint
+
+```json
+[
+  {
+    "pal_id": uint,
+    "user_id": uint,
+    "message": "your msg"
+  },
+  {
+    "pal_id": uint,
+    "user_id": uint,
+    "message": "your msg"
+  },
+  ...
+]
+```

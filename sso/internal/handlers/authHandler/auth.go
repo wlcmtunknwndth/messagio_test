@@ -27,6 +27,13 @@ type Auth struct {
 	log     *slog.Logger
 }
 
+func New(service AuthService, log *slog.Logger) *Auth {
+	return &Auth{
+		service: service,
+		log:     log,
+	}
+}
+
 const (
 	scope = "sso.internal.handlers.authHandler."
 
@@ -35,7 +42,6 @@ const (
 	errInvalidCredentials  = "Invalid credentials"
 	errInternalServerError = "Internal server error"
 	errBadRequest          = "Bad request"
-	errIdQuery             = "ID not found"
 )
 
 func (a *Auth) Login(w http.ResponseWriter, r *http.Request) {
@@ -126,7 +132,7 @@ func (a *Auth) Register(w http.ResponseWriter, r *http.Request) {
 //}
 
 func extractUserCredentials(r *http.Request) (*api.User, error) {
-	const op = scope + "extractUserCreds"
+	const op = scope + "extractUserCredentials"
 
 	defer r.Body.Close()
 

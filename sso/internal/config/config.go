@@ -9,9 +9,10 @@ import (
 const configPathEnv = "config_path"
 
 type Config struct {
-	Env    string   `yaml:"env" env-default:"prod"`
-	Server Server   `yaml:"server" env-required:"true"`
-	DB     DataBase `yaml:"db"`
+	Env      string        `yaml:"env" env-default:"prod"`
+	TokenTTL time.Duration `yaml:"token_ttl" env-default:"5m"`
+	Server   Server        `yaml:"server" env-required:"true"`
+	DB       DataBase      `yaml:"db"`
 }
 
 type Server struct {

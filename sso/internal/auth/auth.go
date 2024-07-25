@@ -7,7 +7,6 @@ import (
 	"github.com/wlcmtunknwndth/messagio_test/common/jwt"
 	"github.com/wlcmtunknwndth/messagio_test/sso/internal"
 	"github.com/wlcmtunknwndth/messagio_test/sso/internal/domain/models"
-	//"github.com/wlcmtunknwndth/messagio_test/sso/internal/lib/jwt"
 	"github.com/wlcmtunknwndth/messagio_test/sso/internal/storage"
 	"golang.org/x/crypto/bcrypt"
 	"log/slog"
@@ -61,7 +60,7 @@ func (a *Auth) Login(ctx context.Context, username, password string) (string, er
 		isAdmin = false
 	}
 
-	token, err := jwt.NewToken(usr, a.tokenTTL, isAdmin)
+	token, err := jwt.NewToken(usr.ID, usr.Username, a.tokenTTL, isAdmin)
 	if err != nil {
 		return "", fmt.Errorf("%s: %w", op, err)
 	}

@@ -32,7 +32,5 @@ func New(clientId, servers, acks string, log *slog.Logger) (*Kafka, error) {
 }
 
 func (k *Kafka) Close() {
-	const op = scope + "Close"
-
 	k.producer.Close()
 }

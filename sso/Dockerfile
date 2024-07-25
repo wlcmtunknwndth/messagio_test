@@ -31,6 +31,6 @@ RUN mkdir /sso
 COPY --from=build /bin/server /sso
 COPY ./config/config.yaml /sso
 
-EXPOSE 8888
+EXPOSE 7777
 
 ENTRYPOINT [ "/sso/server" ]
