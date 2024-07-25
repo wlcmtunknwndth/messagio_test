@@ -15,6 +15,8 @@ services:
   sso:
     environment:
       - config_path: /sso/config.yaml
+    env_file:
+      - "auth.env"
     networks: ["SRV"]
     build:
       context: backend

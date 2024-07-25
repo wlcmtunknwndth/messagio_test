@@ -4,9 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/wlcmtunknwndth/messagio_test/common/jwt"
 	"github.com/wlcmtunknwndth/messagio_test/sso/internal"
 	"github.com/wlcmtunknwndth/messagio_test/sso/internal/domain/models"
-	"github.com/wlcmtunknwndth/messagio_test/sso/internal/lib/jwt"
+	//"github.com/wlcmtunknwndth/messagio_test/sso/internal/lib/jwt"
 	"github.com/wlcmtunknwndth/messagio_test/sso/internal/storage"
 	"golang.org/x/crypto/bcrypt"
 	"log/slog"
@@ -89,7 +90,7 @@ func (a *Auth) RegisterNewUser(ctx context.Context, username, pass string) (int6
 }
 
 func (a *Auth) IsAdmin(ctx context.Context, userID int64) (bool, error) {
-	const op = scope + ".IsAdmin"
+	const op = scope + "IsAdmin"
 
 	isAdmin, err := a.storage.IsAdmin(ctx, userID)
 	if err != nil {
