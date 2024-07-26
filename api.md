@@ -41,8 +41,10 @@ this method returns jwt auth in cookies
 
 ```JSON
 {
+  "id": uint,
   "pal_id": uint,
   "user_id": uint,
+  "created_at": uint,
   "message": "your msg"
 }
 ```
@@ -61,14 +63,40 @@ this method returns jwt auth in cookies
 ```json
 [
   {
+    "id": uint,
     "pal_id": uint,
     "user_id": uint,
+    "created_at": uint,
     "message": "your msg"
   },
   {
+    "id": uint,
     "pal_id": uint,
     "user_id": uint,
+    "created_at": uint,
     "message": "your msg"
+  },
+  ...
+]
+```
+
+## GET /chats
+
+```json
+[
+  {
+    "id": uint,
+    "pal_id": uint,
+    "user_id": uint,
+    "created_at": uint,
+    "message": "last sent message from [pal_id]"
+  },
+  {
+    "id": uint,
+    "pal_id": uint,
+    "user_id": uint,
+    "created_at": uint,
+    "message": "last sent message from [pal_id]"
   },
   ...
 ]
