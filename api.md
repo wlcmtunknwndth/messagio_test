@@ -56,7 +56,7 @@ this method returns jwt auth in cookies
 }
 ```
 
-## GET /chat?_id=uint&offset=uint&limit=uint
+## GET /chat?pal_id=uint&offset=uint&limit=uint
 
 ```json
 [
