@@ -8,17 +8,20 @@ import (
 )
 
 type Storage interface {
-	Send(ctx context.Context, input *api.Message)
+	Save(ctx context.Context, input *api.Message) (int64, error)
+	ChatMessage(ctx context.Context, id int64, palID int64, limit, offset int) []api.Message
+	Chats(ctx context.Context, id int64) []api.Message
 }
 
 type Kafka struct {
-	log *slog.Logger
-	cfg *kafka.ConfigMap
+	log     *slog.Logger
+	cfg     *kafka.ConfigMap
+	storage Storage
 }
 
 const scope = "inner.scope.broker.kafka."
 
-func New(clientId, servers, acks string, log *slog.Logger) *Kafka {
+func New(clientId, servers, acks string, storage Storage, log *slog.Logger) *Kafka {
 	const op = scope + "New"
 	cfg := kafka.ConfigMap{
 		"bootstrap.servers": servers,
@@ -26,15 +29,9 @@ func New(clientId, servers, acks string, log *slog.Logger) *Kafka {
 		"acks":              acks,
 	}
 
-	//producer, err := kafka.NewProducer(&cfg)
-	//if err != nil {
-	//	//return nil, fmt.Errorf("%s: %w", op, err)
-	//}
-	////producer.
-	//consumer, err := kafka.NewConsumer(&cfg)
-	//consumer.
 	return &Kafka{
-		log: log,
-		cfg: &cfg,
+		log:     log,
+		cfg:     &cfg,
+		storage: storage,
 	}
 }
