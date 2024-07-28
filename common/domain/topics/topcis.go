@@ -1,7 +1,5 @@
 package topics
 
 const (
-	HandleMessage      = "msg"
-	HandleChatsRequest = "chat"
-	HandleChatRequest  = "chats"
+	HandleCountMessage = "message_sent"
 )

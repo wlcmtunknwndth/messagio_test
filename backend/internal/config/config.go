@@ -29,7 +29,6 @@ type DataBase struct {
 
 type Broker struct {
 	Rebalance bool   `json:"rebalance" env-default:"false"`
-	Consumers int    `json:"consumers" env-default:"1"`
 	ClientID  string `yaml:"client_id" env-default:"1"`
 	Servers   string `yaml:"servers" env-default:"host1:9092"`
 	Acks      string `yaml:"acks" env-default:"all"`
@@ -38,7 +37,7 @@ type Broker struct {
 const configPathEnv = "config_path"
 
 func MustLoad() *Config {
-	const op = "inner.config.MustLoad"
+	const op = "backend.config.MustLoad"
 
 	path, ok := os.LookupEnv(configPathEnv)
 	if !ok || path == "" {

@@ -13,13 +13,12 @@ type Storage interface {
 }
 
 type Broker interface {
-	MessageSent(ctx context.Context, id, palID, createdAtUnix int64) error
+	CountMessageSent(ctx context.Context, id, palID, createdAtUnix int64) error
 }
 
 const scope = "backend.internal.messager."
 
 type Messager struct {
-	//log *slog.Logger
 	storage Storage
 	broker  Broker
 }
@@ -32,7 +31,7 @@ func (m *Messager) SaveMessage(ctx context.Context, input *api.Message) (int64, 
 		return 0, fmt.Errorf("%s: %w", op, err)
 	}
 
-	if err = m.broker.MessageSent(ctx, input.UserID, input.PalID, input.CreatedAt); err != nil {
+	if err = m.broker.CountMessageSent(ctx, input.UserID, input.PalID, input.CreatedAt); err != nil {
 		return id, fmt.Errorf("%s: %w", op, err)
 	}
 
