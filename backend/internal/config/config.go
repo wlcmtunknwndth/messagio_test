@@ -28,9 +28,11 @@ type DataBase struct {
 }
 
 type Broker struct {
-	ClientID string `yaml:"client_id" env-default:"1"`
-	Servers  string `yaml:"servers" env-default:"host1:9092"`
-	Acks     string `yaml:"acks" env-default:"all"`
+	Rebalance bool   `json:"rebalance" env-default:"false"`
+	Consumers int    `json:"consumers" env-default:"1"`
+	ClientID  string `yaml:"client_id" env-default:"1"`
+	Servers   string `yaml:"servers" env-default:"host1:9092"`
+	Acks      string `yaml:"acks" env-default:"all"`
 }
 
 const configPathEnv = "config_path"

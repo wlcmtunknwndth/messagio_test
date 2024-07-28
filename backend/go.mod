@@ -5,7 +5,7 @@ go 1.22.0
 require (
 	github.com/confluentinc/confluent-kafka-go v1.9.2
 	github.com/ilyakaznacheev/cleanenv v1.5.0
-	github.com/wlcmtunknwndth/messagio_test/common v0.0.0-20240726205230-ccb5a6adc586
+	github.com/wlcmtunknwndth/messagio_test/common v0.0.0-20240726210528-2a2a2e770f76
 )
 
 require (
