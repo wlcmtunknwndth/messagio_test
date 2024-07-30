@@ -1,0 +1,24 @@
+version: 3
+
+tasks:
+  run_services:
+    aliases:
+      - run
+    desc: "run docker containers"
+    cmds:
+      - docker compose up
+
+  delete_service_images:
+    aliases:
+      - del
+    desc: "shutdown containers and delete images with volumes"
+    cmds:
+      - docker compose down
+      - docker rmi messagio_test-server
+      - docker volume rm messagio_test_db
+
+  clean:
+    desc: "shutdown containers and delete images"
+    cmds:
+      - docker compose down
+      - docker rmi messagio_test-server
