@@ -1,5 +1,5 @@
 ################################################################################
-ARG GO_VERSION=1.23
+ARG GO_VERSION=1.22
 FROM --platform=$BUILDPLATFORM golang:${GO_VERSION} AS build
 WORKDIR /src
 
@@ -12,7 +12,7 @@ ARG TARGETARCH
 
 RUN --mount=type=cache,target=/go/pkg/mod/ \
     --mount=type=bind,target=. \
-    CGO_ENABLED=0 GOARCH=$TARGETARCH go build -o /bin/server ./cmd/server
+    CGO_ENABLED=1 GOARCH=$TARGETARCH go build -o /bin/server ./cmd/server
 
 ################################################################################
 FROM alpine:latest AS final
@@ -27,10 +27,11 @@ RUN --mount=type=cache,target=/var/cache/apk \
 ARG UID=10001
 USER root
 
-RUN mkdir /server
-COPY --from=build /bin/server /server
-COPY ./config/config.yaml /server
+RUN mkdir /bin/messager
+COPY --from=build /bin/server /bin/messager
+COPY config/config.yaml /bin/messager
 
+RUN chmod +x /bin/messager/server
 EXPOSE 8888
 
-ENTRYPOINT [ "/server/server" ]
+ENTRYPOINT [ "/bin/messager/server" ]

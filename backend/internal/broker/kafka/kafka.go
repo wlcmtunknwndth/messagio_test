@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/confluentinc/confluent-kafka-go/kafka"
+	KafkaLib "github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/wlcmtunknwndth/messagio_test/backend/internal/config"
 	"github.com/wlcmtunknwndth/messagio_test/common/domain/api"
 	"github.com/wlcmtunknwndth/messagio_test/common/domain/topics"
@@ -13,7 +13,7 @@ import (
 
 type Kafka struct {
 	log            *slog.Logger
-	messageCounter *kafka.Producer
+	messageCounter *KafkaLib.Producer
 }
 
 const scope = "inner.scope.broker.kafka."
@@ -21,7 +21,7 @@ const scope = "inner.scope.broker.kafka."
 func New(cfg *config.Broker, log *slog.Logger) (*Kafka, error) {
 	const op = scope + "New"
 
-	counter, err := kafka.NewProducer(&kafka.ConfigMap{
+	counter, err := KafkaLib.NewProducer(&KafkaLib.ConfigMap{
 		"bootstrap.servers": cfg.Servers,
 		"client.id":         cfg.ClientID,
 		"acks":              cfg.Acks,
@@ -45,8 +45,8 @@ func (k *Kafka) CountMessageSent(ctx context.Context, msg *api.Message) error {
 	}
 
 	topic := topics.HandleCountMessage
-	err = k.messageCounter.Produce(&kafka.Message{
-		TopicPartition: kafka.TopicPartition{Topic: &topic, Partition: kafka.PartitionAny},
+	err = k.messageCounter.Produce(&KafkaLib.Message{
+		TopicPartition: KafkaLib.TopicPartition{Topic: &topic, Partition: KafkaLib.PartitionAny},
 		Value:          data,
 	}, nil)
 	if err != nil {

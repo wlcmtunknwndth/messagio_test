@@ -1,44 +1,61 @@
 services:
-  server:
+  backend:
     environment:
-      - config_path: /server/config.yaml
-    networks: ["SRV"]
-    build:
-      context: backend
-      target: final
+      - config_path=/messager/config.yaml
+    networks: ["srv"]
+    env_file:
+      - "auth.env"
+    build: ./backend
+#      dockerfile: ../backend/Dockerfile
+#      context: backend
+#      target: final
     ports:
       - "8888:8888"
     depends_on:
       - sso
       - kafka
       - postgres
+      - zookeeper
   sso:
     environment:
-      - config_path: /sso/config.yaml
+      - config_path=/sso/config.yaml
     env_file:
       - "auth.env"
-    networks: ["SRV"]
-    build:
-      context: backend
-      target: final
+    networks: ["srv"]
+    build: ./sso
+#      dockerfile: ../sso/Dockerfile
+#      context: sso
+#      target: final
     ports:
       - "7777:7777"
     depends_on:
       - postgres
       - kafka
+      - zookeeper
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "22181:2181"
+
   kafka:
     image: confluentinc/cp-kafka:latest
-    restart: always
+    depends_on:
+      - zookeeper
+#    restart: always
     ports:
-      - "9092:9092"
-    networks: ["SRV"]
+      - "29092:29092"
     environment:
       KAFKA_BROKER_ID: 1
-#      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
   postgres:
     image: postgres
     restart: always
@@ -51,7 +68,7 @@ services:
       - PGUSER=postgres
     ports:
       - "5432:5432"
-    networks: [ "SRV" ]
+    networks: ["srv"]
 
     healthcheck:
       test: [ "CMD", "pg_isready" ]
@@ -63,5 +80,5 @@ networks:
   srv:
     name: srv
 volumes:
-  data:
+  db:
     driver: local

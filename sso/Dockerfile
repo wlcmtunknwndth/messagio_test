@@ -1,5 +1,5 @@
 ################################################################################
-ARG GO_VERSION=1.23
+ARG GO_VERSION=1.22
 FROM --platform=$BUILDPLATFORM golang:${GO_VERSION} AS build
 WORKDIR /src
 
@@ -27,10 +27,11 @@ RUN --mount=type=cache,target=/var/cache/apk \
 ARG UID=10001
 USER root
 
-RUN mkdir /sso
-COPY --from=build /bin/server /sso
-COPY ./config/config.yaml /sso
+RUN mkdir /bin/sso
+COPY --from=build /bin/server /bin/sso
+COPY config/config.yaml /bin/sso
 
 EXPOSE 7777
+RUN chmod +x /bin/sso/server
 
-ENTRYPOINT [ "/sso/server" ]
+ENTRYPOINT [ "/bin/sso/server" ]
