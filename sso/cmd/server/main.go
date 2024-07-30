@@ -1,6 +1,7 @@
 package server
 
 import (
+	"context"
 	"github.com/wlcmtunknwndth/messagio_test/common/logger"
 	"github.com/wlcmtunknwndth/messagio_test/common/sl"
 	"github.com/wlcmtunknwndth/messagio_test/sso/internal/app"
@@ -14,7 +15,7 @@ import (
 	"syscall"
 )
 
-const scope = "main"
+const scope = "sso.cmd.server.main"
 
 func main() {
 	cfg := config.MustLoad()
@@ -42,8 +43,8 @@ func main() {
 	}()
 
 	<-stop
-	if err = application.Close(); err != nil {
-		slog.Error("couldn't close application", sl.Op(scope), sl.Err(err))
+	if err = application.Close(context.Background()); err != nil {
+		log.Error("couldn't close application", sl.Op(scope), sl.Err(err))
 		return
 	}
 	return

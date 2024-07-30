@@ -2,45 +2,43 @@ package app
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-	"log/slog"
 	"net/http"
 	"time"
 )
 
-const (
-	scope    = "sso.internal.app."
-	register = "register"
-	login    = "login"
-)
+const scope = "backend.internal.app."
 
-type AuthHandler interface {
-	Login(w http.ResponseWriter, r *http.Request)
-	Register(w http.ResponseWriter, r *http.Request)
+type MessagerHandler interface {
+	HandleMessage(w http.ResponseWriter, r *http.Request)
+	HandleChatRequest(w http.ResponseWriter, r *http.Request)
+	GetChats(w http.ResponseWriter, r *http.Request)
 }
 
 type App struct {
-	handler AuthHandler
-	log     *slog.Logger
+	handler MessagerHandler
 	server  *http.Server
 }
 
-func New(Address string, timeout, idleTimeout time.Duration, auth AuthHandler, log *slog.Logger) *App {
+func New(address string, timeout, idleTimeout time.Duration, handler MessagerHandler) *App {
 	router := chi.NewRouter()
 	router.Use(middleware.RequestID)
 	router.Use(middleware.Logger)
 	router.Use(middleware.Recoverer)
-	router.Post(login, auth.Login)
-	router.Post(register, auth.Register)
+
+	router.Post("/send", handler.HandleMessage)
+	router.Get("/chat", handler.HandleChatRequest)
+	router.Get("/chats", handler.GetChats)
+
 	return &App{
-		handler: auth,
-		log:     nil,
+		handler: handler,
 		server: &http.Server{
-			Addr:         Address,
+			Addr:         address,
 			WriteTimeout: timeout,
-			IdleTimeout:  idleTimeout,
+			ReadTimeout:  idleTimeout,
 			Handler:      router,
 		},
 	}
@@ -49,9 +47,10 @@ func New(Address string, timeout, idleTimeout time.Duration, auth AuthHandler, l
 func (a *App) Run() error {
 	const op = scope + "Run"
 
-	if err := a.server.ListenAndServe(); err != nil {
+	if err := a.server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 		return fmt.Errorf("%s: %w", op, err)
 	}
+
 	return nil
 }
 

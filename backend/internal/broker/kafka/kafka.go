@@ -2,15 +2,17 @@ package kafka
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/wlcmtunknwndth/messagio_test/backend/internal/config"
+	"github.com/wlcmtunknwndth/messagio_test/common/domain/api"
+	"github.com/wlcmtunknwndth/messagio_test/common/domain/topics"
 	"log/slog"
 )
 
 type Kafka struct {
-	log *slog.Logger
-	//cfg *config.Broker
+	log            *slog.Logger
 	messageCounter *kafka.Producer
 }
 
@@ -34,13 +36,22 @@ func New(cfg *config.Broker, log *slog.Logger) (*Kafka, error) {
 	}, nil
 }
 
-func (k *Kafka) CountMessageSent(ctx context.Context, id, palID, createdAtUnix int64) error {
+func (k *Kafka) CountMessageSent(ctx context.Context, msg *api.Message) error {
 	const op = scope + "CountMessageSent"
 
-	//k.messageCounter.Produce(&kafka.Message{
-	//	TopicPartition: ,
-	//
-	//})
+	data, err := json.Marshal(msg)
+	if err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+
+	topic := topics.HandleCountMessage
+	err = k.messageCounter.Produce(&kafka.Message{
+		TopicPartition: kafka.TopicPartition{Topic: &topic, Partition: kafka.PartitionAny},
+		Value:          data,
+	}, nil)
+	if err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
 
 	return nil
 }
