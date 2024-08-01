@@ -41,6 +41,8 @@ github.com/stretchr/testify v1.8.1 h1:w7B6lhMri9wdJUVmEZPGGhZzrYTPvgJArz7wNPgYKs
 github.com/stretchr/testify v1.8.1/go.mod h1:w2LPCIKwWwSfY2zedu0+kehJoqGctiVI29o6fzry7u4=
 github.com/wlcmtunknwndth/messagio_test/common v0.0.0-20240725123907-f7dccc50d337 h1:7MGVuvGm3y7WfTgaFNvtCYlZYprdjWqCT+UOgzBKa0s=
 github.com/wlcmtunknwndth/messagio_test/common v0.0.0-20240725123907-f7dccc50d337/go.mod h1:12TINik6XdGvue09wkhq+08hBQER8Qx5Inp+JSvN4Hk=
+github.com/wlcmtunknwndth/messagio_test/common v0.0.0-20240801132501-5e07e98a3bc5 h1:jDI40Hd+B6cYFYcRNxhdMNxDL+QTGNuW2aXy+gXNC0I=
+github.com/wlcmtunknwndth/messagio_test/common v0.0.0-20240801132501-5e07e98a3bc5/go.mod h1:u593mB4R+31HrEDAa8VVueP46yHWAvM0Y+Zx2Zx7apc=
 golang.org/x/crypto v0.25.0 h1:ypSNr+bnYL2YhwoMt2zPxHFmbAN1KZs/njMG3hxUp30=
 golang.org/x/crypto v0.25.0/go.mod h1:T+wALwcMOSE0kXgUAnPAHqTLW+XHgcELELW8VaDgm/M=
 golang.org/x/sync v0.7.0 h1:YsImfSBoP9QPYL0xyKJPq0gcaJdG3rInoqxTWbfQu9M=

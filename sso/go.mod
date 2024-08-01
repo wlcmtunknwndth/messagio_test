@@ -6,7 +6,7 @@ require (
 	github.com/go-chi/chi/v5 v5.1.0
 	github.com/ilyakaznacheev/cleanenv v1.5.0
 	github.com/lib/pq v1.10.9
-	github.com/wlcmtunknwndth/messagio_test/common v0.0.0-20240725123907-f7dccc50d337
+	github.com/wlcmtunknwndth/messagio_test/common v0.0.0-20240801132501-5e07e98a3bc5
 	golang.org/x/crypto v0.25.0
 	gorm.io/driver/postgres v1.5.9
 	gorm.io/gorm v1.25.11
