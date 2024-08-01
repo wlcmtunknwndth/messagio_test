@@ -34,29 +34,36 @@ var (
 
 func NewToken(id int64, username string, duration time.Duration, isAdmin bool) (string, error) {
 	const op = scope + "NewToken"
-	token := jwt.New(jwt.SigningMethodHS512)
-
-	claims, ok := token.Claims.(jwt.MapClaims)
-	if !ok {
-		return "", fmt.Errorf("%s: %w", op, errMapAssertion)
+	//token := jwt.New(jwt.SigningMethodHS512)
+	//
+	//claims, ok := token.Claims.(jwt.MapClaims)
+	//if !ok {
+	//	return "", fmt.Errorf("%s: %w", op, errMapAssertion)
+	//}
+	claims := jwt.MapClaims{
+		idKey:         id,
+		usernameKey:   username,
+		expirationKey: time.Now().Add(duration).Unix(),
+		adminKey:      isAdmin,
 	}
-
-	claims[idKey] = id
-	claims[usernameKey] = username
-	claims[expirationKey] = time.Now().Add(duration).Unix()
-	claims[adminKey] = isAdmin
+	//claims[idKey] = id
+	//claims[usernameKey] = username
+	//claims[expirationKey] = time.Now().Add(duration).Unix()
+	//claims[adminKey] = isAdmin
 
 	secret, ok := os.LookupEnv(secretKeyEnv)
 	if !ok {
 		return "", fmt.Errorf("%s: %w", op, ErrNoKeyFound)
 	}
 
-	tokenString, err := token.SignedString([]byte(secret))
+	token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(secret))
+
+	//tokenString, err := token.SignedString([]byte(secret))
 
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("%s: %w", op, err)
 	}
-	return tokenString, nil
+	return token, nil
 }
 
 func GetInfo(token string) (*Info, error) {
@@ -147,7 +154,12 @@ func GetID(token string) (int64, error) {
 		return 0, fmt.Errorf("%s: %w", op, err)
 	}
 
-	id, ok := claims[idKey].(int64)
+	idInterface, ok := claims[idKey]
+	if !ok {
+		return 0, fmt.Errorf("%s: %w", op, errValueNotFound)
+	}
+
+	id, ok := idInterface.(int64)
 	if !ok {
 		return 0, fmt.Errorf("%s: %w", op, errAssertion)
 	} else if id == 0 {

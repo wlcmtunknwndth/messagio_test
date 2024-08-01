@@ -24,7 +24,7 @@ func (s *Storage) IsAdmin(ctx context.Context, userID int64) (bool, error) {
 	const op = scope + "IsAdmin"
 
 	var usr models.Admin
-	if err := s.db.WithContext(ctx).First(&usr, userID).Scan(&usr).Error; err != nil {
+	if err := s.db.WithContext(ctx).Where("user_id = ?", userID).First(&usr).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return false, nil
 		}

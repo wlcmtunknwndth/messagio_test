@@ -77,6 +77,8 @@ func (h *HandlerHTTP) HandleMessage(w http.ResponseWriter, r *http.Request) {
 	userID, err := jwt.GetID(token)
 	if err != nil {
 		httpResp.Write(w, http.StatusUnauthorized, unauthorized)
+		h.log.Error("couldn't get id", sl.Op(op), sl.Err(err))
+		return
 	}
 
 	var msg = api.Message{

@@ -12,6 +12,6 @@ type UserAPI struct {
 }
 
 type Admin struct {
-	ID      int64 `gorm:"primaryKey;autoIncrement:true;uniqueIndex"`
+	UserID  int64 `gorm:"primaryKey;uniqueIndex"`
 	IsAdmin bool  `gorm:"default:false"`
 }
