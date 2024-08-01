@@ -5,10 +5,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/wlcmtunknwndth/messagio_test/common/domain/api"
 	"github.com/wlcmtunknwndth/messagio_test/common/httpResp"
 	"github.com/wlcmtunknwndth/messagio_test/common/sl"
 	"github.com/wlcmtunknwndth/messagio_test/sso/internal"
+	"github.com/wlcmtunknwndth/messagio_test/sso/internal/domain/models"
 	"io"
 	"log/slog"
 	"net/http"
@@ -131,7 +131,7 @@ func (a *Auth) Register(w http.ResponseWriter, r *http.Request) {
 //
 //}
 
-func extractUserCredentials(r *http.Request) (*api.User, error) {
+func extractUserCredentials(r *http.Request) (*models.UserAPI, error) {
 	const op = scope + "extractUserCredentials"
 
 	defer r.Body.Close()
@@ -141,7 +141,7 @@ func extractUserCredentials(r *http.Request) (*api.User, error) {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	var usr api.User
+	var usr models.UserAPI
 	if err = json.Unmarshal(data, &usr); err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}

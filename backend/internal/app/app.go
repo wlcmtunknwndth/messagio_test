@@ -10,7 +10,13 @@ import (
 	"time"
 )
 
-const scope = "backend.internal.app."
+const (
+	scope = "backend.internal.app."
+
+	getChats = "/chats"
+	getChat  = "/chat"
+	sendMsg  = "/send"
+)
 
 type MessagerHandler interface {
 	HandleMessage(w http.ResponseWriter, r *http.Request)
@@ -28,17 +34,19 @@ func New(address string, timeout, idleTimeout time.Duration, handler MessagerHan
 	router.Use(middleware.RequestID)
 	router.Use(middleware.Logger)
 	router.Use(middleware.Recoverer)
+	router.Use(middleware.URLFormat)
 
-	router.Post("/send", handler.HandleMessage)
-	router.Get("/chat", handler.HandleChatRequest)
-	router.Get("/chats", handler.GetChats)
+	router.Post(sendMsg, handler.HandleMessage)
+	router.Get(getChat, handler.HandleChatRequest)
+	router.Get(getChats, handler.GetChats)
 
 	return &App{
 		handler: handler,
 		server: &http.Server{
 			Addr:         address,
 			WriteTimeout: timeout,
-			ReadTimeout:  idleTimeout,
+			ReadTimeout:  timeout,
+			IdleTimeout:  idleTimeout,
 			Handler:      router,
 		},
 	}

@@ -9,11 +9,11 @@ import (
 	"gorm.io/gorm/clause"
 )
 
-func (s *Storage) User(ctx context.Context, email string) (*models.User, error) {
+func (s *Storage) User(ctx context.Context, username string) (*models.User, error) {
 	const op = scope + "User"
 
 	var usr models.User
-	if err := s.db.WithContext(ctx).First(&models.User{}).Where("email = ?", email).Scan(&usr); err != nil {
+	if err := s.db.WithContext(ctx).Where("username = ?", username).First(&usr).Error; err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err.Error)
 	}
 

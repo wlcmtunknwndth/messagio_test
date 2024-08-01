@@ -1,4 +1,4 @@
-package server
+package main
 
 import (
 	"context"
@@ -22,6 +22,8 @@ func main() {
 
 	log := logger.SetupLogger(cfg.Env)
 
+	log.Info("Configuration loaded", slog.Any("config", cfg))
+
 	storage, err := postgres.New(&cfg.DB)
 	if err != nil {
 		slog.Error("couldn't connect to postgres", sl.Op(scope), sl.Err(err))
@@ -30,7 +32,7 @@ func main() {
 
 	authService := auth.New(log, storage, cfg.TokenTTL)
 
-	application := app.New(cfg.Server.Addr, cfg.Server.Timeout, cfg.Server.IdleTimeout, authHandler.New(authService, log), log)
+	application := app.New(cfg.Server.Addr, cfg.Server.Timeout, cfg.Server.IdleTimeout, authHandler.New(authService, log))
 
 	stop := make(chan os.Signal)
 	signal.Notify(stop, syscall.SIGTERM, syscall.SIGINT)
@@ -41,6 +43,8 @@ func main() {
 		}
 		return
 	}()
+
+	slog.Info("server started", slog.String("Address", cfg.Server.Addr))
 
 	<-stop
 	if err = application.Close(context.Background()); err != nil {

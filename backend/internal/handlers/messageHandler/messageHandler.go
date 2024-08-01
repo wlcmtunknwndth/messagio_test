@@ -26,10 +26,10 @@ type HandlerHTTP struct {
 	messager Messager
 }
 
-func New(messager Messager, log *slog.Logger) *HandlerHTTP {
+func New(msgr Messager, log *slog.Logger) *HandlerHTTP {
 	return &HandlerHTTP{
 		log:      log,
-		messager: messager,
+		messager: msgr,
 	}
 }
 
@@ -37,7 +37,7 @@ const (
 	badRequest          = "Bad request"
 	internalServerError = "Internal server error"
 	tokenNotFound       = "Token not found"
-	unauthoried         = "Unauthorized"
+	unauthorized        = "Unauthorized"
 	queryNotFound       = "Query key/values not found"
 	queryBadValue       = "Query bad value"
 
@@ -76,7 +76,7 @@ func (h *HandlerHTTP) HandleMessage(w http.ResponseWriter, r *http.Request) {
 
 	userID, err := jwt.GetID(token)
 	if err != nil {
-		httpResp.Write(w, http.StatusUnauthorized, unauthoried)
+		httpResp.Write(w, http.StatusUnauthorized, unauthorized)
 	}
 
 	var msg = api.Message{
@@ -148,7 +148,7 @@ func (h *HandlerHTTP) HandleChatRequest(w http.ResponseWriter, r *http.Request) 
 
 	userID, err := jwt.GetID(token)
 	if err != nil {
-		httpResp.Write(w, http.StatusUnauthorized, unauthoried)
+		httpResp.Write(w, http.StatusUnauthorized, unauthorized)
 		h.log.Error("couldn't get id from token", sl.Op(op), sl.Err(err))
 		return
 	}
@@ -186,7 +186,7 @@ func (h *HandlerHTTP) GetChats(w http.ResponseWriter, r *http.Request) {
 
 	userID, err := jwt.GetID(token)
 	if err != nil {
-		httpResp.Write(w, http.StatusUnauthorized, unauthoried)
+		httpResp.Write(w, http.StatusUnauthorized, unauthorized)
 		h.log.Error("couldn't get id from token", sl.Op(op), sl.Err(err))
 		return
 	}

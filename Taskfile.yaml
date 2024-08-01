@@ -14,11 +14,13 @@ tasks:
     desc: "shutdown containers and delete images with volumes"
     cmds:
       - docker compose down
-      - docker rmi messagio_test-server
+      - docker rmi messagio_test-sso
       - docker volume rm messagio_test_db
+      - docker rmi messagio_test-backend
 
   clean:
     desc: "shutdown containers and delete images"
     cmds:
       - docker compose down
-      - docker rmi messagio_test-server
+      - docker rmi messagio_test-sso
+      - docker rmi messagio_test-backend

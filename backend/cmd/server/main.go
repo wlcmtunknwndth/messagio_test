@@ -10,6 +10,7 @@ import (
 	"github.com/wlcmtunknwndth/messagio_test/backend/internal/storage/postgres"
 	"github.com/wlcmtunknwndth/messagio_test/common/logger"
 	"github.com/wlcmtunknwndth/messagio_test/common/sl"
+	"log/slog"
 	"os"
 	"os/signal"
 	"syscall"
@@ -21,6 +22,8 @@ func main() {
 	cfg := config.MustLoad()
 
 	log := logger.SetupLogger(cfg.Env)
+
+	log.Info("Configuration loaded", slog.Any("Config", cfg))
 
 	storage, err := postgres.New(&cfg.DB)
 	if err != nil {
@@ -46,6 +49,8 @@ func main() {
 		}
 		return
 	}()
+
+	slog.Info("Server started", slog.String("Address", cfg.Server.Address))
 
 	<-stop
 

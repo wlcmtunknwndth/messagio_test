@@ -16,7 +16,7 @@ type Config struct {
 }
 
 type Server struct {
-	Addr        string        `yaml:"addr" env-default:"localhost:7777"`
+	Addr        string        `yaml:"address" env-default:"0.0.0.0:9999"`
 	Timeout     time.Duration `yaml:"timeout"`
 	IdleTimeout time.Duration `yaml:"idle_timeout"`
 }

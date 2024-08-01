@@ -139,6 +139,8 @@ github.com/stretchr/testify v1.8.1 h1:w7B6lhMri9wdJUVmEZPGGhZzrYTPvgJArz7wNPgYKs
 github.com/stretchr/testify v1.8.1/go.mod h1:w2LPCIKwWwSfY2zedu0+kehJoqGctiVI29o6fzry7u4=
 github.com/wlcmtunknwndth/messagio_test/common v0.0.0-20240728195042-f2ba539a514c h1:4rfh9EFfSQBUmFvZiwWS5gbRd4RTthcAyfmJHc5PRiE=
 github.com/wlcmtunknwndth/messagio_test/common v0.0.0-20240728195042-f2ba539a514c/go.mod h1:u593mB4R+31HrEDAa8VVueP46yHWAvM0Y+Zx2Zx7apc=
+github.com/wlcmtunknwndth/messagio_test/common v0.0.0-20240730022104-6f375daee1f9 h1:JGL3tsKzI9JRaPGc7AykUH9fyWUT3cmCNzJpCguqLL8=
+github.com/wlcmtunknwndth/messagio_test/common v0.0.0-20240730022104-6f375daee1f9/go.mod h1:u593mB4R+31HrEDAa8VVueP46yHWAvM0Y+Zx2Zx7apc=
 github.com/yuin/goldmark v1.1.27/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
 go.opentelemetry.io/proto/otlp v0.7.0/go.mod h1:PqfVotwruBrMGOCsRd/89rSnXhoiJIqeYNgFYFoEGnI=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=

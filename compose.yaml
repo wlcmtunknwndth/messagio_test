@@ -5,33 +5,34 @@ services:
     networks: ["srv"]
     env_file:
       - "auth.env"
-    build: ./backend
-#      dockerfile: ../backend/Dockerfile
-#      context: backend
-#      target: final
+    build:
+      context: backend
+      target: final
     ports:
       - "8888:8888"
+    platform: linux/amd64
     depends_on:
-      - sso
-      - kafka
-      - postgres
-      - zookeeper
+      kafka:
+        condition: service_started
+      postgres:
+        condition: service_healthy
+      zookeeper:
+        condition: service_started
   sso:
     environment:
       - config_path=/sso/config.yaml
     env_file:
       - "auth.env"
-    networks: ["srv"]
-    build: ./sso
-#      dockerfile: ../sso/Dockerfile
-#      context: sso
-#      target: final
+    platform: linux/amd64
+#    networks: ["srv"]
+    build:
+      context: sso
+      target: final
     ports:
-      - "7777:7777"
+      - "9999:9999"
     depends_on:
-      - postgres
-      - kafka
-      - zookeeper
+      postgres:
+        condition: service_healthy
 
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
@@ -45,7 +46,6 @@ services:
     image: confluentinc/cp-kafka:latest
     depends_on:
       - zookeeper
-#    restart: always
     ports:
       - "29092:29092"
     environment:
@@ -68,7 +68,7 @@ services:
       - PGUSER=postgres
     ports:
       - "5432:5432"
-    networks: ["srv"]
+#    networks: ["srv"]
 
     healthcheck:
       test: [ "CMD", "pg_isready" ]

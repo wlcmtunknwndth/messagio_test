@@ -6,7 +6,7 @@ require (
 	github.com/confluentinc/confluent-kafka-go v1.9.2
 	github.com/go-chi/chi/v5 v5.1.0
 	github.com/ilyakaznacheev/cleanenv v1.5.0
-	github.com/wlcmtunknwndth/messagio_test/common v0.0.0-20240728195042-f2ba539a514c
+	github.com/wlcmtunknwndth/messagio_test/common v0.0.0-20240730022104-6f375daee1f9
 	gorm.io/driver/postgres v1.5.9
 	gorm.io/gorm v1.25.11
 )

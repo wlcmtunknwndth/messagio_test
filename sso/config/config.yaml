@@ -1,7 +1,7 @@
 env: "local"
 token_ttl: 3m
 server:
-  address: "localhost:7777"
+  address: "0.0.0.0:9999"
   timeout: 5s
   idle_timeout: 30s
 db:
