@@ -15,13 +15,14 @@ const (
 	adminKey      = "isadmin"
 	expirationKey = "exp"
 
-	scope = "common.jwt.NewToken."
+	scope = "common.jwt."
 )
 
 type Info struct {
 	ID       int64
 	Username string
 	IsAdmin  bool
+	jwt.RegisteredClaims
 }
 
 var (
@@ -40,12 +41,17 @@ func NewToken(id int64, username string, duration time.Duration, isAdmin bool) (
 	//if !ok {
 	//	return "", fmt.Errorf("%s: %w", op, errMapAssertion)
 	//}
-	claims := jwt.MapClaims{
-		idKey:         id,
-		usernameKey:   username,
-		expirationKey: time.Now().Add(duration).Unix(),
-		adminKey:      isAdmin,
+	inf := &Info{
+		ID:       id,
+		Username: username,
+		IsAdmin:  isAdmin,
 	}
+	//claims := jwt.MapClaims{
+	//	idKey:         id,
+	//	usernameKey:   username,
+	//	expirationKey: time.Now().Add(duration).Unix(),
+	//	adminKey:      isAdmin,
+	//}
 	//claims[idKey] = id
 	//claims[usernameKey] = username
 	//claims[expirationKey] = time.Now().Add(duration).Unix()
@@ -56,7 +62,7 @@ func NewToken(id int64, username string, duration time.Duration, isAdmin bool) (
 		return "", fmt.Errorf("%s: %w", op, ErrNoKeyFound)
 	}
 
-	token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(secret))
+	token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, inf).SignedString([]byte(secret))
 
 	//tokenString, err := token.SignedString([]byte(secret))
 
@@ -69,33 +75,33 @@ func NewToken(id int64, username string, duration time.Duration, isAdmin bool) (
 func GetInfo(token string) (*Info, error) {
 	const op = scope + "GetInfo"
 
-	claims, err := castToMapClaims(token)
+	claims, err := parseToken(token)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	var inf Info
-	var ok bool
-	inf.Username, ok = claims[usernameKey].(string)
-	if inf.Username == "" {
-		return nil, fmt.Errorf("%s: %w", op, errAssertion)
-	} else if !ok {
-		return nil, fmt.Errorf("%s: %w", op, ErrNoKeyFound)
-	}
+	//var inf Info
+	//var ok bool
+	//inf.Username, ok = claims[usernameKey].(string)
+	//if inf.Username == "" {
+	//	return nil, fmt.Errorf("%s: %w", op, errAssertion)
+	//} else if !ok {
+	//	return nil, fmt.Errorf("%s: %w", op, ErrNoKeyFound)
+	//}
+	//
+	//inf.ID, ok = claims[idKey].(int64)
+	//if inf.ID == 0 {
+	//	return nil, fmt.Errorf("%s: %w", op, errAssertion)
+	//} else if !ok {
+	//	return nil, fmt.Errorf("%s: %w", op, ErrNoKeyFound)
+	//}
+	//
+	//inf.IsAdmin, ok = claims[adminKey].(bool)
+	//if !ok {
+	//	return nil, fmt.Errorf("%s: %w", op, ErrNoKeyFound)
+	//}
 
-	inf.ID, ok = claims[idKey].(int64)
-	if inf.ID == 0 {
-		return nil, fmt.Errorf("%s: %w", op, errAssertion)
-	} else if !ok {
-		return nil, fmt.Errorf("%s: %w", op, ErrNoKeyFound)
-	}
-
-	inf.IsAdmin, ok = claims[adminKey].(bool)
-	if !ok {
-		return nil, fmt.Errorf("%s: %w", op, ErrNoKeyFound)
-	}
-
-	return &inf, nil
+	return claims, nil
 }
 
 func Access(token string) (bool, error) {
@@ -116,73 +122,88 @@ func Access(token string) (bool, error) {
 func IsAdmin(token string) (bool, error) {
 	const op = scope + "IsAdmin"
 
-	claims, err := castToMapClaims(token)
+	claims, err := parseToken(token)
 	if err != nil {
 		return false, fmt.Errorf("%s: %w", op, err)
 	}
 
-	res, ok := claims[adminKey].(bool)
-	if !ok {
-		return false, fmt.Errorf("%s: %w", op, errAssertion)
-	}
+	//res, ok := claims[adminKey].(bool)
+	//if !ok {
+	//	return false, fmt.Errorf("%s: %w", op, errAssertion)
+	//}
 
-	return res, nil
+	return claims.IsAdmin, nil
 }
 
 func GetUsername(token string) (string, error) {
 	const op = scope + "GetUsername"
 
-	claims, err := castToMapClaims(token)
+	claims, err := parseToken(token)
 	if err != nil {
 		return "", fmt.Errorf("%s: %w", op, err)
 	}
 
-	username, ok := claims[usernameKey].(string)
-	if !ok {
-		return "", fmt.Errorf("%s: %w", op, errAssertion)
-	} else if username == "" {
-		return "", fmt.Errorf("%s: %w", op, ErrNoKeyFound)
+	if claims.Username == "" {
+		return "", fmt.Errorf("%s: %w", op, errValueNotFound)
 	}
-	return username, nil
+	//username, ok := claims[usernameKey].(string)
+	//if !ok {
+	//	return "", fmt.Errorf("%s: %w", op, errAssertion)
+	//} else if username == "" {
+	//	return "", fmt.Errorf("%s: %w", op, ErrNoKeyFound)
+	//}
+	return claims.Username, nil
 }
 
 func GetID(token string) (int64, error) {
 	const op = scope + "GetID"
 
-	claims, err := castToMapClaims(token)
+	claims, err := parseToken(token)
 	if err != nil {
 		return 0, fmt.Errorf("%s: %w", op, err)
 	}
 
-	idInterface, ok := claims[idKey]
-	if !ok {
+	if claims.ID == 0 {
 		return 0, fmt.Errorf("%s: %w", op, errValueNotFound)
 	}
+	//idInterface, ok := claims[idKey]
+	//if !ok {
+	//	return 0, fmt.Errorf("%s: %w", op, errValueNotFound)
+	//}
+	//
+	//id, ok := idInterface.(int64)
+	//if !ok {
+	//	return 0, fmt.Errorf("%s: %w", op, errAssertion)
+	//} else if id == 0 {
+	//	return 0, fmt.Errorf("%s: %w", op, ErrNoKeyFound)
+	//}
 
-	id, ok := idInterface.(int64)
-	if !ok {
-		return 0, fmt.Errorf("%s: %w", op, errAssertion)
-	} else if id == 0 {
-		return 0, fmt.Errorf("%s: %w", op, ErrNoKeyFound)
-	}
-
-	return id, nil
+	return claims.ID, nil
 }
 
-func castToMapClaims(token string) (jwt.MapClaims, error) {
-	const op = scope + "castToMapClaims"
+func parseToken(token string) (*Info, error) {
+	const op = scope + "parseToken"
 
-	tkn, err := jwt.Parse(token, getKey)
+	var info Info
+	tkn, err := jwt.ParseWithClaims(token, &info, getKey)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	claims, ok := tkn.Claims.(jwt.MapClaims)
-	if !ok {
-		return nil, fmt.Errorf("%s: %w", op, errAssertion)
+	//tkn, err := jwt.Parse(token, getKey)
+	//if err != nil {
+	//	return nil, fmt.Errorf("%s: %w", op, err)
+	//}
+
+	//claims, ok := tkn.Claims.(jwt.MapClaims)
+	//if !ok {
+	//	return nil, fmt.Errorf("%s: %w", op, errAssertion)
+	//}
+	if !tkn.Valid {
+		return nil, fmt.Errorf("%s: %w", op, ErrInvalidToken)
 	}
 
-	return claims, nil
+	return &info, nil
 }
 
 func getKey(token *jwt.Token) (interface{}, error) {
