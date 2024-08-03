@@ -2,26 +2,23 @@ package postgres
 
 import (
 	"fmt"
-	"github.com/wlcmtunknwndth/messagio_test/backend/internal/config"
-	"github.com/wlcmtunknwndth/messagio_test/common/domain/api"
+	"github.com/wlcmtunknwndth/stats/internal/config"
+	"github.com/wlcmtunknwndth/stats/internal/domain/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
+
+const scope = "stats.internal.storage.postgres."
 
 type Storage struct {
 	db *gorm.DB
 }
 
-const (
-	scope = "backend.internal.storage.postgres."
-)
-
 func New(cfg *config.DataBase) (*Storage, error) {
 	const op = scope + "New"
 
 	connStr := fmt.Sprintf("postgres://%s:%s@postgres:%s/%s?sslmode=%s",
-		cfg.DbUser, cfg.DbPass, cfg.Port,
-		cfg.DbName, cfg.SslMode,
+		cfg.DbUser, cfg.DbPass, cfg.Port, cfg.DbName, cfg.SslMode,
 	)
 
 	db, err := gorm.Open(postgres.Open(connStr), &gorm.Config{})
@@ -29,7 +26,7 @@ func New(cfg *config.DataBase) (*Storage, error) {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	if err = db.AutoMigrate(&api.Message{}); err != nil {
+	if err = db.AutoMigrate(&models.Stats{}, &models.UserStats{}); err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 

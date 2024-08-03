@@ -16,7 +16,7 @@ type Kafka struct {
 	messageCounter *KafkaLib.Producer
 }
 
-const scope = "inner.scope.broker.kafka."
+const scope = "inner.internal.broker.kafka."
 
 func New(cfg *config.Broker, log *slog.Logger) (*Kafka, error) {
 	const op = scope + "New"
@@ -53,5 +53,10 @@ func (k *Kafka) CountMessageSent(ctx context.Context, msg *api.Message) error {
 		return fmt.Errorf("%s: %w", op, err)
 	}
 
+	return nil
+}
+
+func (k *Kafka) Close() error {
+	k.messageCounter.Close()
 	return nil
 }

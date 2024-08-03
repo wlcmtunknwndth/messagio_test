@@ -1,0 +1,15 @@
+env: local
+server:
+  address: "0.0.0.0:7777"
+  timeout: 10s
+  idle_timeout: 30s
+db:
+  user: "postgres"
+  pass: "postgres"
+  name: "postgres"
+  ssl_mode: "disable"
+  port: "5432"
+broker:
+  client_id: "1"
+  servers: "kafka:9092" # ,host2:9092
+  acks: "all"

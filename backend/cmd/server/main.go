@@ -36,9 +36,10 @@ func main() {
 		return
 	}
 
-	httpHandler := messageHandler.New(messager.New(storage, kfk), log)
-
-	application := app.New(cfg.Server.Address, cfg.Server.Timeout, cfg.Server.IdleTimeout, httpHandler)
+	application := app.New(
+		cfg.Server.Address, cfg.Server.Timeout, cfg.Server.IdleTimeout,
+		messageHandler.New(messager.New(storage, kfk), log),
+	)
 
 	stop := make(chan os.Signal)
 	signal.Notify(stop, syscall.SIGINT, syscall.SIGTERM)

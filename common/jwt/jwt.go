@@ -9,11 +9,11 @@ import (
 )
 
 const (
-	secretKeyEnv  = "jwtkey"
-	idKey         = "id"
-	usernameKey   = "user"
-	adminKey      = "isadmin"
-	expirationKey = "exp"
+	secretKeyEnv = "jwtkey"
+	//idKey         = "id"
+	//usernameKey   = "user"
+	//adminKey      = "isadmin"
+	//expirationKey = "exp"
 
 	scope = "common.jwt."
 )
@@ -26,10 +26,10 @@ type Info struct {
 }
 
 var (
-	ErrNoKeyFound    = errors.New("no secret key found")
-	ErrInvalidToken  = errors.New("invalid token")
-	errMapAssertion  = errors.New("couldn't assert to map claims")
-	errAssertion     = errors.New("wrong assertion")
+	ErrNoKeyFound   = errors.New("no secret key found")
+	ErrInvalidToken = errors.New("invalid token")
+	//errMapAssertion  = errors.New("couldn't assert to map claims")
+	//errAssertion     = errors.New("wrong assertion")
 	errValueNotFound = errors.New("value not found")
 )
 

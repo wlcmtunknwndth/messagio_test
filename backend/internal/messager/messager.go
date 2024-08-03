@@ -2,6 +2,7 @@ package messager
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/wlcmtunknwndth/messagio_test/common/domain/api"
 )
@@ -10,10 +11,12 @@ type Storage interface {
 	Save(ctx context.Context, input *api.Message) (int64, error)
 	ChatMessages(ctx context.Context, id int64, palID int64, limit, offset int) ([]api.Message, error)
 	Chats(ctx context.Context, id int64) ([]api.Message, error)
+	Close() error
 }
 
 type Broker interface {
 	CountMessageSent(ctx context.Context, msg *api.Message) error
+	Close() error
 }
 
 const scope = "backend.internal.messager."
@@ -66,4 +69,16 @@ func (m *Messager) GetChats(ctx context.Context, id int64) ([]api.Message, error
 	}
 
 	return chats, nil
+}
+
+func (m *Messager) Close() error {
+	const op = scope + "Close"
+
+	err := errors.Join(m.broker.Close(), m.storage.Close())
+
+	if err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+
+	return nil
 }

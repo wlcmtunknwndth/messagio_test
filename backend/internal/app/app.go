@@ -22,6 +22,7 @@ type MessagerHandler interface {
 	HandleMessage(w http.ResponseWriter, r *http.Request)
 	HandleChatRequest(w http.ResponseWriter, r *http.Request)
 	GetChats(w http.ResponseWriter, r *http.Request)
+	Close() error
 }
 
 type App struct {
@@ -65,7 +66,8 @@ func (a *App) Run() error {
 func (a *App) Close(ctx context.Context) error {
 	const op = scope + "Close"
 
-	if err := a.server.Shutdown(ctx); err != nil {
+	err := errors.Join(a.server.Shutdown(ctx), a.handler.Close())
+	if err != nil {
 		return fmt.Errorf("%s: %w", op, err)
 	}
 	return nil

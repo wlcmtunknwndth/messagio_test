@@ -19,6 +19,7 @@ type Messager interface {
 	SaveMessage(ctx context.Context, input *api.Message) (int64, error)
 	GetChat(ctx context.Context, id, palID int64, limit, offset int) ([]api.Message, error)
 	GetChats(ctx context.Context, id int64) ([]api.Message, error)
+	Close() error
 }
 
 type HandlerHTTP struct {
@@ -212,4 +213,13 @@ func (h *HandlerHTTP) GetChats(w http.ResponseWriter, r *http.Request) {
 		h.log.Error("couldn't write chats", sl.Op(op), sl.Err(err))
 		return
 	}
+}
+
+func (h *HandlerHTTP) Close() error {
+	const op = scope + "Close"
+
+	if err := h.messager.Close(); err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+	return nil
 }
