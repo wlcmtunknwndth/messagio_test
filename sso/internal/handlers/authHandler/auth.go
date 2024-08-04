@@ -116,7 +116,7 @@ func (a *Auth) Register(w http.ResponseWriter, r *http.Request) {
 //		return
 //	}
 //
-//	res, err := a.service.IsAdmin(r.Context(), id)
+//	res, err := a.handler.IsAdmin(r.Context(), id)
 //	if err != nil {
 //		a.log.Error("couldn't determine if user is admin", sl.Op(op), sl.Err(err))
 //		httpResp.Write(w, http.StatusInternalServerError, errInternalServerError)

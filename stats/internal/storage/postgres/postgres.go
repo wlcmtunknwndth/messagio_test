@@ -1,7 +1,9 @@
 package postgres
 
 import (
+	"context"
 	"fmt"
+	"github.com/wlcmtunknwndth/messagio_test/common/domain/api"
 	"github.com/wlcmtunknwndth/stats/internal/config"
 	"github.com/wlcmtunknwndth/stats/internal/domain/models"
 	"gorm.io/driver/postgres"
@@ -26,7 +28,7 @@ func New(cfg *config.DataBase) (*Storage, error) {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	if err = db.AutoMigrate(&models.Stats{}, &models.UserStats{}); err != nil {
+	if err = db.AutoMigrate(&models.MsgCount{}); err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
@@ -41,6 +43,20 @@ func (s *Storage) Close() error {
 		return fmt.Errorf("%s: %w", op, err)
 	}
 	if err = sqlDB.Close(); err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+
+	return nil
+}
+
+func (s *Storage) CountMessage(ctx context.Context, message *api.Message) error {
+	const op = scope + "CountMessage"
+
+	if err := s.db.WithContext(ctx).Save(&models.MsgCount{
+		UserID:    message.UserID,
+		PalID:     message.PalID,
+		CreatedAt: message.CreatedAt,
+	}).Error; err != nil {
 		return fmt.Errorf("%s: %w", op, err)
 	}
 

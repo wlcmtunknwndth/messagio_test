@@ -37,7 +37,7 @@ Git репозиторий с кодом
 ```
 this method returns jwt auth in cookies
 
-## Message
+## Messager
 
 ```JSON
 {
@@ -49,7 +49,7 @@ this method returns jwt auth in cookies
 }
 ```
 
-## POST /send
+## POST {addr}:{port}/send
 
 ```JSON
 {
@@ -58,7 +58,7 @@ this method returns jwt auth in cookies
 }
 ```
 
-## GET /chat?pal_id=uint&offset=uint&limit=uint
+## GET {addr}:{port}/chat?pal_id={uint}&offset={uint}&limit={uint}
 
 ```json
 [
@@ -80,7 +80,7 @@ this method returns jwt auth in cookies
 ]
 ```
 
-## GET /chats
+## GET {addr}:{port}/chats
 
 ```json
 [
@@ -100,4 +100,38 @@ this method returns jwt auth in cookies
   },
   ...
 ]
+```
+
+## Statistics
+
+## GET {addr}:{port}/MessagesReceived?since={uint}&to={uint}
+
+```json
+{
+  "messages": uint,
+  "since": uint,
+  "to": uint,
+}
+```
+
+## GET {addr}:{port}/MessagesReceivedByUser?since={uint}&to={uint}
+
+```json
+{
+  "user_id": uint,
+  "messages": uint,
+  "since": uint,
+  "to": uint,
+}
+```
+
+## GET {addr}:{port}/MessagesSentByUser?since={uint}&to={uint}
+
+```json
+{
+  "user_id": uint,
+  "messages": uint,
+  "since": uint,
+  "to": uint,
+}
 ```

@@ -82,3 +82,11 @@ func (k *Kafka) FetchMessages(ctx context.Context) {
 		}
 	}
 }
+
+func (k *Kafka) Close() error {
+	const op = scope + "Close"
+	if err := k.messageHandler.Close(); err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+	return nil
+}
