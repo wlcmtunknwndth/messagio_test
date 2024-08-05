@@ -31,6 +31,5 @@ COPY --from=build-sso /bin/server /sso
 COPY config/config.yaml /sso
 
 EXPOSE 9999
-#RUN chmod a+x /sso/server
 
 ENTRYPOINT ["/sso/server"]

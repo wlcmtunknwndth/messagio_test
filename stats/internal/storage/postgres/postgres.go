@@ -52,7 +52,7 @@ func (s *Storage) Close() error {
 func (s *Storage) CountMessage(ctx context.Context, message *api.Message) error {
 	const op = scope + "CountMessage"
 
-	if err := s.db.WithContext(ctx).Save(&models.MsgCount{
+	if err := s.db.WithContext(ctx).Model(&models.MsgCount{}).Save(&models.MsgCount{
 		UserID:    message.UserID,
 		PalID:     message.PalID,
 		CreatedAt: message.CreatedAt,

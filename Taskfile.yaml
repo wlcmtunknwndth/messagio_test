@@ -17,6 +17,7 @@ tasks:
       - docker rmi messagio_test-sso
       - docker volume rm messagio_test_db
       - docker rmi messagio_test-backend
+      - docker rmi messagio_test-stats
 
   clean:
     desc: "shutdown containers and delete images"
@@ -24,3 +25,4 @@ tasks:
       - docker compose down
       - docker rmi messagio_test-sso
       - docker rmi messagio_test-backend
+      - docker rmi messagio_test-stats

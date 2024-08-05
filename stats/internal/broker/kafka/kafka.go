@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/wlcmtunknwndth/messagio_test/common/domain/api"
+	"github.com/wlcmtunknwndth/messagio_test/common/domain/topics"
 	"github.com/wlcmtunknwndth/messagio_test/common/sl"
 	"github.com/wlcmtunknwndth/stats/internal/config"
 	"log/slog"
@@ -28,10 +29,14 @@ func New(cfg *config.Broker, storage Storage, log *slog.Logger) (*Kafka, error) 
 
 	consumer, err := kafka.NewConsumer(&kafka.ConfigMap{
 		"bootstrap.servers": cfg.Servers,
-		"client.id":         cfg.ClientID,
+		"group.id":          cfg.ClientID,
 		"acks":              cfg.Acks,
 	})
 	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	if err = consumer.Subscribe(topics.HandleCountMessage, nil); err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
@@ -76,8 +81,6 @@ func (k *Kafka) FetchMessages(ctx context.Context) {
 			case kafka.Error:
 				k.log.Error("Kafka error", sl.Op(op), sl.Err(e))
 				return
-				//default:
-				//	k.log.Info("Ignored")
 			}
 		}
 	}

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	"net/http"
 	"time"
 )
@@ -32,9 +33,14 @@ type App struct {
 func New(handler HandlerHTTP, broker Broker, address string, writeTimeout time.Duration, idleTimeout time.Duration) *App {
 	router := chi.NewRouter()
 
-	router.Get("MessagesReceived", handler.MessagesReceived)
-	router.Get("MessagesReceivedByUser", handler.MessagesReceivedByUser)
-	router.Get("MessagesSentByUser", handler.MessagesSentByUser)
+	router.Use(middleware.Logger)
+	router.Use(middleware.URLFormat)
+	router.Use(middleware.Recoverer)
+	router.Use(middleware.RequestID)
+
+	router.Get("/MessagesReceived", handler.MessagesReceived)
+	router.Get("/MessagesReceivedByUser", handler.MessagesReceivedByUser)
+	router.Get("/MessagesSentByUser", handler.MessagesSentByUser)
 	return &App{
 		handler: handler,
 		broker:  broker,

@@ -2,7 +2,6 @@ services:
   backend:
     environment:
       - config_path=/msg/config.yaml
-#    networks: ["srv"]
     env_file:
       - "auth.env"
     build:
@@ -24,7 +23,6 @@ services:
     env_file:
       - "auth.env"
     platform: linux/amd64
-#    networks: ["srv"]
     build:
       context: sso
       target: final
@@ -33,6 +31,25 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+
+  stats:
+    environment:
+      - config_path=/stats/config.yaml
+    env_file:
+      - "auth.env"
+    platform: linux/amd64
+    build:
+      context: stats
+      target: final
+    ports:
+      - "7777:7777"
+    depends_on:
+      kafka:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      zookeeper:
+        condition: service_started
 
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
@@ -75,7 +92,6 @@ services:
       - PGUSER=postgres
     ports:
       - "5432:5432"
-#    networks: ["srv"]
 
     healthcheck:
       test: [ "CMD", "pg_isready" ]

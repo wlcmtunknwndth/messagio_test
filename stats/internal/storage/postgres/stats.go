@@ -11,7 +11,7 @@ func (s *Storage) MessagesReceived(ctx context.Context, since, to int64) (*model
 
 	var counter int64
 	if err := s.db.WithContext(ctx).Model(&models.MsgCount{}).
-		Where("created_at > ? and created at < ??", since, to).
+		Where("created_at > ? and created_at < ??", since, to).
 		Count(&counter).Error; err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
